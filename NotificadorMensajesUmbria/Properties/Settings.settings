@@ -1,0 +1,69 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="NotificadorMensajesUmbria.Properties" GeneratedClassName="Settings">
+  <Profiles />
+  <Settings>
+    <Setting Name="url" Type="System.String" Scope="User">
+      <Value Profile="(Default)">https://www.comunidadumbria.com/usuario/novedades</Value>
+    </Setting>
+    <Setting Name="usuario" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="clave" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="showMensajesDirector" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="idMensajesDirector" Type="System.String" Scope="User">
+      <Value Profile="(Default)">m_1</Value>
+    </Setting>
+    <Setting Name="showMensajesJugador" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="idMensajesJugador" Type="System.String" Scope="User">
+      <Value Profile="(Default)">m_2</Value>
+    </Setting>
+    <Setting Name="idMensajesVIP" Type="System.String" Scope="User">
+      <Value Profile="(Default)">m_3</Value>
+    </Setting>
+    <Setting Name="idMensajesTalleresDirector" Type="System.String" Scope="User">
+      <Value Profile="(Default)">m_20</Value>
+    </Setting>
+    <Setting Name="idMensajesTalleresRedactor" Type="System.String" Scope="User">
+      <Value Profile="(Default)">m_4</Value>
+    </Setting>
+    <Setting Name="idMensajesPrivados" Type="System.String" Scope="User">
+      <Value Profile="(Default)">iconoMensajes</Value>
+    </Setting>
+    <Setting Name="tagMensajesPrivados" Type="System.String" Scope="User">
+      <Value Profile="(Default)">span</Value>
+    </Setting>
+    <Setting Name="showMensajesPrivados" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="Resumido" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="Espera" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">15</Value>
+    </Setting>
+    <Setting Name="showNotificacionSinMensajes" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="IniciarMinimizado" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="showMensajesVIP" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="showMensajesTalleresDirector" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="showMensajesTalleresRedactor" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="browser" Type="System.String" Scope="User">
+      <Value Profile="(Default)">default</Value>
+    </Setting>
+  </Settings>
+</SettingsFile>
