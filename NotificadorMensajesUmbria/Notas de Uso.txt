@@ -1,0 +1,30 @@
+﻿Lo primero, gracias por confiar en esta aplicación. Es algo que hice para uso personal, sin pretensiones, y que te pueda ser de utilidad me alegra bastante.
+
+He intentado que sea lo más sencilla e intuitiva posible, pero por si acaso, aquí dejo unas guías de uso, por si tienes algún problema o si eres de los que te lees el manual de la tostadora antes de usarla.
+
+En primer lugar, cuando arranques el programa, tendrás que ir a la configuración. Hay un botón que pone Configurar (ya te he dicho que he intentado que sea sencillo). Pulsalo. Con el ratón. Oye, si te tengo que explicar esto tambien vamos mal... Vale, se abrirá una ventana en la que podrás rellenar tu nombre de usuario y tu contraseña. Es fundamental para poder conectarse a la web y saber si tienes mensajes pendientes. Tranquilo, la contraseña se guarda encriptada y nadie podrá trastear con ella. Tambien podrás indicar sobre que tipo de mensajes quieres ser notificados (mensajes en tus partidas como director, en las que estes como jugador, en las que estes como VIP...), el tiempo de espera entre comprobación y comprobación, y algunos parametros de la aplicación, que te explico a continuación:
+
+- Mostrar notificación resumida: Por defecto, esta desactivada y al mostrarte la notificación, te indicará cuantos mensajes tienes desglosados por hilos y partidas. Si marcas la notificación resumida,te indicará solo el total de mensajes pendientes que tienes, sin desglosarlos.
+
+- Mostrar notificación INCLUSO si no hay mensajes: He supuesto que si no tienes mensajes, es molesto que cada poco tiempo te salga un cartelito indicando "No tienes mensajes". Solo saldrá si tienes algún mensaje nuevo. Pero si quieres que te lo indique igualmente, puedes marcar esta opción.
+
+- Lanzar al Iniciar Sesión: Pues eso mismo, si marcas esta opción, cuando inicies sesión con tu usuario en Windows, se iniciará el notificador.
+
+- Iniciar Minimizado: Marca esta opción para que la aplicación se inicie en estado minimizado. Cuando la aplicación se minimiza, no aparece el icono en la barra de Ventanas, sino que solo lo podrás ver en la barra de tareas, abajo a la derecha.
+
+- Navegador: por defecto, en esta opción pone "Default". Eso significa "por defecto" en inglés. Es decir, usará el navegador web que tengas predeterminado por defecto en tu sistema operativo. Si prefieres usar otro, puedes seleccionarlo de la lista.
+
+Acuerdate de darle a Grabar para no perder los cambios que hagas. La pantalla principal es sencilla, tiene dos textos para saber cuando fue la última comprobación de novedades y cuando será la siguiente, un botón "Comprobar" para forzar la comprobación, una barra de progreso para que veas cuanto queda, y un cuadro con el resultado de la última comprobación. Tambien aparecerá una notificación en la barra de tareas.
+
+Cuando la aplicación esté minimizada, aparecerá el icono en la barra de tareas. Pulsando en él con el botón Izquierdo del ratón, abrirá automáticamente la página de Novedades en Umbría. Pulsando con el botón derecho, aparecerá un menú con las opciones que ya hemos visto:
+
+- Comprobar: para forzar la comprobación, igual que el botón de la pantalla principal.
+- Configurar: abre la pantalla de configuración.
+- Resumén: un texto con el resumen de la última comprobación.
+- Ir a Novedades: abre el navegador para ir a la web, directamente a la pantalla de novedades.
+- Maximizar: para volver a la pantalla principal de la aplicación. 
+- Salir: para cerrar la aplicación y dejar de recibir notificaciones.
+
+NOTA IMPORTANTE: Asegurate de escribir bien tu usuario y password. La aplicación te indicará que no hay mensajes si no puede conectar, pero no te dará ningún mensaje de error ni te avisará de que la contraseña está mal.
+
+Y eso es todo. Si tienes cualquier sugerencia o quieres informar de algún error, puedes escribirme a elderane@hotmail.com, o mandarme un privado a mi usuario de Umbría (elderane). 
