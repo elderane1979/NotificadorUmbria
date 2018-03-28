@@ -51,7 +51,15 @@ namespace NotificadorMensajesUmbria
 
         private void TimerProgreso_Tick(object sender, EventArgs e)
         {
+            progreso += incrementoProgreso;
+            if(progreso >= ProgressBar.Maximum)
+            {
+                Comprobar();
 
+                progreso = ProgressBar.Minimum;
+                ProgressBar.Value = ProgressBar.Minimum;
+            }
+            ProgressBar.Value = (int)(progreso);
         }
 
         private void Comprobar()
@@ -80,7 +88,9 @@ namespace NotificadorMensajesUmbria
                 if (resultMsg != Constantes.NO_MENSAJES
                     || Properties.Settings.Default.showNotificacionSinMensajes)
                     notifyIcon1.ShowBalloonTip(2000);
+
                 LblLast.Text = "Última comprobación: " + DateTime.Now;
+                LblNext.Text = "Siguiente comprobación: " + DateTime.Now.AddMinutes(Properties.Settings.Default.Espera);
 
             }
             catch(Exception ex)
