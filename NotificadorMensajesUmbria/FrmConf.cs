@@ -20,7 +20,7 @@ namespace NotificadorMensajesUmbria
             InitializeComponent();
             //Cargar Navegadores Instalados
             cmbBrowser.DataSource = LoadInstalledBrowsers();
-            cmbBrowser.DisplayMember ="Item1";
+            cmbBrowser.DisplayMember = "Item1";
             cmbBrowser.ValueMember = "Item2";
         }
 
@@ -62,18 +62,18 @@ namespace NotificadorMensajesUmbria
         private void BtnGrabar_Click(object sender, EventArgs e)
         {
             Properties.Settings.Default.usuario = tbUsuario.Text;
-            Properties.Settings.Default.clave = EasyCrypto.AesEncryption.EncryptWithPassword( tbPassword.Text, Constantes.PASSWORD_KEY);
-            Properties.Settings.Default.Espera =(int) tbIntervalo.Value;
+            Properties.Settings.Default.clave = EasyCrypto.AesEncryption.EncryptWithPassword(tbPassword.Text, Constantes.PASSWORD_KEY);
+            Properties.Settings.Default.Espera = (int)tbIntervalo.Value;
             Properties.Settings.Default.showMensajesDirector = chkDirector.Checked;
             Properties.Settings.Default.showMensajesJugador = chkJugador.Checked;
             Properties.Settings.Default.showMensajesPrivados = chkJugador.Checked;
             Properties.Settings.Default.Resumido = chkResumida.Checked;
             Properties.Settings.Default.showNotificacionSinMensajes = chkNotificacionSinMensajes.Checked;
             Properties.Settings.Default.IniciarMinimizado = chkMinimizado.Checked;
-            Properties.Settings.Default.showMensajesVIP= chkVips.Checked ;
-            Properties.Settings.Default.showMensajesTalleresRedactor=chkTallerRedactor.Checked ;
-            Properties.Settings.Default.showMensajesTalleresDirector=chkTallerDirector.Checked;
-            if (cmbBrowser.SelectedValue == Constantes.DEFAULT_BROWSER)
+            Properties.Settings.Default.showMensajesVIP = chkVips.Checked;
+            Properties.Settings.Default.showMensajesTalleresRedactor = chkTallerRedactor.Checked;
+            Properties.Settings.Default.showMensajesTalleresDirector = chkTallerDirector.Checked;
+            if (cmbBrowser.SelectedValue.ToString() == Constantes.DEFAULT_BROWSER)
                 Properties.Settings.Default.browser = Constantes.DEFAULT_BROWSER;
             else
                 Properties.Settings.Default.browser = cmbBrowser.SelectedValue.ToString();
@@ -103,22 +103,38 @@ namespace NotificadorMensajesUmbria
             {
                 RegistryKey webClientsRootKey = hklm.OpenSubKey(@"SOFTWARE\Clients\StartMenuInternet");
                 if (webClientsRootKey != null)
+                {
                     foreach (var subKeyName in webClientsRootKey.GetSubKeyNames())
-                        if (webClientsRootKey.OpenSubKey(subKeyName) != null)
-                            if (webClientsRootKey.OpenSubKey(subKeyName).OpenSubKey("shell") != null)
-                                if (webClientsRootKey.OpenSubKey(subKeyName).OpenSubKey("shell").OpenSubKey("open") != null)
-                                    if (webClientsRootKey.OpenSubKey(subKeyName).OpenSubKey("shell").OpenSubKey("open").OpenSubKey("command") != null)
-                                    {
-                                        string commandLineUri = (string)webClientsRootKey.OpenSubKey(subKeyName).OpenSubKey("shell").OpenSubKey("open").OpenSubKey("command").GetValue(null);
-                                        if (string.IsNullOrEmpty(commandLineUri))
-                                            continue;
-                                        commandLineUri = commandLineUri.Trim("\"".ToCharArray());
-                                        Tuple<string, string> newBrowser = new Tuple<string, string>((string)webClientsRootKey.OpenSubKey(subKeyName).GetValue(null), commandLineUri);
+                    {
+                        string commandLineUri = GetShellOpenCommand(webClientsRootKey, subKeyName);
+                        if (string.IsNullOrEmpty(commandLineUri))
+                            continue;
+                        commandLineUri = commandLineUri.Trim("\"".ToCharArray());
+                        Tuple<string, string> newBrowser = new Tuple<string, string>((string)webClientsRootKey.OpenSubKey(subKeyName).GetValue(null), commandLineUri);
 
-                                        lst.Add(newBrowser);
-                                    }
+                        lst.Add(newBrowser);
+                    }
+                }
             }
             return lst;
+        }
+
+        private string GetShellOpenCommand(RegistryKey webClientsRootKey, string subKeyName)
+        {
+            const string RegEditShellKey = "shell";
+            const string RegEditOpenKey = "open";
+            const string RegEditCommandKey = "command";
+            string commandLineUri = "";
+
+            if (webClientsRootKey.OpenSubKey(subKeyName) != null &&
+                webClientsRootKey.OpenSubKey(subKeyName).OpenSubKey(RegEditShellKey) != null &&
+                webClientsRootKey.OpenSubKey(subKeyName).OpenSubKey(RegEditShellKey).OpenSubKey(RegEditOpenKey) != null &&
+                webClientsRootKey.OpenSubKey(subKeyName).OpenSubKey(RegEditShellKey).OpenSubKey(RegEditOpenKey).OpenSubKey(RegEditCommandKey) != null)
+            {
+                commandLineUri = (string)webClientsRootKey.OpenSubKey(subKeyName).OpenSubKey(RegEditShellKey).OpenSubKey(RegEditOpenKey).OpenSubKey(RegEditCommandKey).GetValue(null);
+            }
+
+            return commandLineUri;
         }
     }
 }
