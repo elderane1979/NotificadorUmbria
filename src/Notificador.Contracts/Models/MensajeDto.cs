@@ -1,6 +1,6 @@
-namespace Notificador.Core.Models
+namespace Notificador.Contracts.Models
 {
-    public class Mensaje
+    public class MensajeDto
     {
         public int Hilos { get; set; }
         public int MensajesCount { get; set; }

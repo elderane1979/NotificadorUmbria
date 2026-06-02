@@ -192,7 +192,6 @@ namespace NotificadorMensajesUmbria
             if(e is MouseEventArgs &&
               (e as MouseEventArgs).Button == MouseButtons.Left)
                 irANovedadesToolStripMenuItem_Click(sender, e);
-            //contextMenuStrip1.Show();
         }
 
         private void comprogarToolStripMenuItem_Click(object sender, EventArgs e)

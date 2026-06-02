@@ -1,6 +1,6 @@
 using System.Threading.Tasks;
 
-namespace Notificador.Infrastructure.Services
+namespace Notificador.Contracts.Interfaces
 {
     public interface IUmbriaClient
     {
