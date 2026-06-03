@@ -7,7 +7,7 @@ namespace Notificador.Infrastructure.Services
     /// Proveedor de configuración que lee AppSettings del archivo de configuración.
     /// Se usa como fallback cuando no es posible acceder a Properties.Settings desde otro ensamblado.
     /// </summary>
-    public class SettingsProvider : ISettingsService
+    public class SettingsProvider : ISettingsProvider
     {
         private readonly System.Collections.Specialized.NameValueCollection _appSettings;
 

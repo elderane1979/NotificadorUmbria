@@ -12,21 +12,29 @@ namespace Notificador.Tests.Mocks
 
         private void SetupPostCredentialsAndGetHtmlAsync()
         {
+            // Configura el mock para devolver una respuesta HTML simulada para un usuario existente con contraseña VACIA
+            this.Setup(m => m.PostCredentialsAndGetHtmlAsync(It.IsAny<string>(),
+                                                             It.Is<string>(user => user == FakeDataUmbriaClient.FAKE_USER_REAL),
+                                                             It.Is<string>(pass => string.IsNullOrEmpty(pass))))
+                .ReturnsAsync(FakeDataUmbriaClient.FAKE_HTML_EMPTY_RESPONSE);
+
             // Configura el mock para devolver una respuesta HTML simulada para un usuario existente con contraseña correcta
-            this.Setup(m => m.PostCredentialsAndGetHtmlAsync(It.Is<string>(user => user == FakeDataUmbriaClient.FAKE_USER_REAL),
-                                                             It.Is<string>(pass => pass == FakeDataUmbriaClient.FAKE_PASSWORD),
-                                                             It.IsAny<string>()))
-                .ReturnsAsync("<html><body>Mocked Response</body></html>");
+            this.Setup(m => m.PostCredentialsAndGetHtmlAsync(It.IsAny<string>(),
+                                                             It.Is<string>(user => user == FakeDataUmbriaClient.FAKE_USER_REAL),
+                                                             It.Is<string>(pass => pass == FakeDataUmbriaClient.FAKE_PASSWORD)))
+                .ReturnsAsync(FakeDataUmbriaClient.FAKE_HTML_RESPONSE);
 
             // Configura el mock para devolver una respuesta HTML simulada para un usuario real con contraseña incorrecta
-            this.Setup(m => m.PostCredentialsAndGetHtmlAsync(It.Is<string>(user => user == FakeDataUmbriaClient.FAKE_USER_REAL),
-                                                             It.Is<string>( pass => pass == FakeDataUmbriaClient.FAKE_PASSWORD_WRONG), 
-                                                             It.IsAny<string>()))
-                .ReturnsAsync("<html><body>Mocked Response</body></html>");
+            this.Setup(m => m.PostCredentialsAndGetHtmlAsync(It.IsAny<string>(),
+                                                             It.Is<string>(user => user == FakeDataUmbriaClient.FAKE_USER_REAL),
+                                                             It.Is<string>( pass => pass == FakeDataUmbriaClient.FAKE_PASSWORD_WRONG)))
+                .ReturnsAsync(FakeDataUmbriaClient.FAKE_HTML_EMPTY_RESPONSE);
 
             // Configura el mock para devolver una respuesta HTML simulada para un usuario no existente
-            this.Setup(m => m.PostCredentialsAndGetHtmlAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
-                .ReturnsAsync("<html><body>Mocked Response</body></html>");
+            this.Setup(m => m.PostCredentialsAndGetHtmlAsync(It.IsAny<string>(),
+                                                             It.Is<string>(user => user != FakeDataUmbriaClient.FAKE_USER_REAL), 
+                                                             It.IsAny<string>()))
+                .ReturnsAsync(FakeDataUmbriaClient.FAKE_HTML_EMPTY_RESPONSE);
         }
     }
 }

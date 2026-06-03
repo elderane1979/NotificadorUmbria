@@ -1,13 +1,10 @@
 ﻿using AutoMapper;
 using Microsoft.Extensions.Logging.Abstractions;
 using Notificador.Contracts.Interfaces;
-using Notificador.Contracts.Models;
 using Notificador.Core.DomainMapper;
 using Notificador.Core.Interfaces;
 using Notificador.Core.Services;
 using Notificador.Tests.FakeData.Infrastructure;
-using Notificador.Tests.Mocks;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Xunit;
@@ -16,9 +13,10 @@ namespace Notificador.Tests.Notificador.Core.Test
 {
     public class NotificadorServiceTest
     {
-        private readonly INotificadorService _service;
-
-        public NotificadorServiceTest()
+        private INotificadorService CreateService(IUmbriaClient umbriaClient = null, 
+                                                  IHtmlParser htmlParser = null, 
+                                                  ISettingsProvider settingProvider = null, 
+                                                  ICryptoService cryptoService = null)
         {
             var config = new MapperConfiguration(cfg =>
             {
@@ -26,56 +24,150 @@ namespace Notificador.Tests.Notificador.Core.Test
             }, loggerFactory: NullLoggerFactory.Instance);
 
             var mapper = config.CreateMapper();
-            _service = new NotificadorService(MockFactory.GetMock<IUmbriaClient>(),
-                                              MockFactory.GetMock<IHtmlParser>(),
-                                              MockFactory.GetMock<ISettingsService>(),
-                                              MockFactory.GetMock<ICryptoService>(),
-                                              mapper);
+
+            // Obtener mocks por defecto desde la fábrica
+            if (umbriaClient == null)
+                umbriaClient = Mocks.MockFactory.GetMock<IUmbriaClient>();
+            if (htmlParser == null)
+                htmlParser = Mocks.MockFactory.GetMock<IHtmlParser>();
+            if(settingProvider == null)
+                settingProvider = Mocks.MockFactory.GetMock<ISettingsProvider>();
+            if(cryptoService == null)
+                cryptoService = Mocks.MockFactory.GetMock<ICryptoService>();
+
+            return new NotificadorService(umbriaClient, htmlParser, settingProvider, cryptoService, mapper);
         }
 
         [Fact]
         public async Task GetNovedadesAsync_FiltersBySettings_ReturnsExpected()
         {
-            var settings = new FakeSettings()
-            {
-                ShowMensajesDirector = true,
-                ShowMensajesJugador = false,
-                ShowMensajesVIP = false,
-                ShowMensajesTalleresDirector = false,
-                ShowMensajesTalleresRedactor = false,
-                ShowMensajesPrivados = true
-            };
+            var service = CreateService();
 
-            var mensajes = new List<MensajeDto>
-            {
-                new MensajeDto { 
-                    Hilos = 1, 
-                    MensajesCount = 2, 
-                    Partida = "P1", 
-                    Tipo = "Director" 
-                },
-                new MensajeDto { 
-                    Hilos = 2, 
-                    MensajesCount = 3, 
-                    Partida = "P2", 
-                    Tipo = "Jugador"
-                }
-            };
+            var result = (await service.GetNovedadesAsync()).ToList();
 
-            var privados = new MensajeDto { 
-                Hilos = 0,
-                MensajesCount = 5, 
-                Partida = string.Empty, 
-                Tipo = "Privados" };
-
-           
-
-            var result = (await _service.GetNovedadesAsync()).ToList();
-
-            // Debe incluir solo el mensaje Director y el privado
-            Assert.Equal(2, result.Count);
+            // Debe incluir los mensajes según los setups por defecto: Director, Jugador y Privados
             Assert.Contains(result, m => m.Tipo == "Director");
+            Assert.Contains(result, m => m.Tipo == "Jugador");
             Assert.Contains(result, m => m.Tipo == "Privados");
+        }
+
+        [Fact]
+        public async Task GetNovedadesAsync_WhenCryptoDecryptThrows_UsesEmptyClave()
+        {
+            //Arrange
+            var settingProvider = Mocks.MockFactory.GetMock<ISettingsProvider>();
+            settingProvider.ClaveEncriptada = FakeDataUmbriaClient.FAKE_PASSWORD_EXCEPTION;
+
+            // Prepare mocks and override crypto to throw
+            var service = CreateService(settingProvider: settingProvider);
+            
+            //Act
+            var result = await service.GetNovedadesAsync();
+
+            //Assert
+            // Should still return mensajes parsed (defaults)
+            Assert.Empty(result);
+        }
+
+        [Fact]
+        public async Task GetNovedadesAsync_WhenNoFlagsSet_ReturnsOnlyPrivadosIfEnabled()
+        {
+            //Arrange
+            // Prepare mocks and override settings to disable most flags
+            var settingsMock = Mocks.MockFactory.GetMock<ISettingsProvider>();
+            if (settingsMock != null)
+            {
+                settingsMock.ShowMensajesDirector= false;
+                settingsMock.ShowMensajesJugador = false;
+                settingsMock.ShowMensajesVIP = false;
+                settingsMock.ShowMensajesTalleresDirector = false;
+                settingsMock.ShowMensajesTalleresRedactor = false;
+                settingsMock.ShowMensajesPrivados = true;
+            }
+            var service = CreateService(settingProvider: settingsMock);
+
+            //Act
+            var result = (await service.GetNovedadesAsync()).ToList();
+
+            //Assert
+            Assert.All(result, m => Assert.Equal("Privados", m.Tipo) );
+        }
+
+        [Theory]
+        [InlineData(true, false, false, false, false, false)] // solo Director
+        [InlineData(false, true, false, false, false, false)] // solo Jugador
+        [InlineData(false, true, false, false, false, true)]  // Jugador + Privados
+        [InlineData(true, true, false, false, false, false)]  // Director + Jugador
+        [InlineData(false, false, true, true, true, false)]   // VIP + Talleres
+        public async Task GetNovedadesAsync_VariousSettings_CombinationsBehaveAsExpected(bool director, bool jugador, bool vip, bool tallerDirector, bool tallerRedactor, bool privados)
+        {
+            var settings = Mocks.MockFactory.GetMock<ISettingsProvider>();
+
+            // Aplicar las propiedades directamente sobre el objeto devuelto por la fábrica
+            settings.ShowMensajesDirector = director;
+            settings.ShowMensajesJugador = jugador;
+            settings.ShowMensajesVIP = vip;
+            settings.ShowMensajesTalleresDirector = tallerDirector;
+            settings.ShowMensajesTalleresRedactor = tallerRedactor;
+            settings.ShowMensajesPrivados = privados;
+
+            var service = CreateService(settingProvider: settings);
+
+            var result = (await service.GetNovedadesAsync()).ToList();
+
+            // Comprobaciones para Director/Jugador/Privados (parser por defecto devuelve Director, Jugador y Privados)
+            if (director)
+            {
+                Assert.Contains(result, m => m.Tipo == "Director");
+            }
+            else
+            {
+                Assert.DoesNotContain(result, m => m.Tipo == "Director");
+            }
+
+            if (jugador)
+            {
+                Assert.Contains(result, m => m.Tipo == "Jugador");
+            }
+            else
+            {
+                Assert.DoesNotContain(result, m => m.Tipo == "Jugador");
+            }
+
+            if (vip)
+            {
+                Assert.Contains(result, m => m.Tipo == "VIP");
+            }
+            else
+            {
+                Assert.DoesNotContain(result, m => m.Tipo == "VIP");
+            }
+
+            if (tallerDirector)
+            {
+                Assert.Contains(result, m => m.Tipo == "Taller (Director)");
+            }
+            else
+            {
+                Assert.DoesNotContain(result, m => m.Tipo == "Taller (Director)");
+            }
+
+            if (tallerRedactor)
+            {
+                Assert.Contains(result, m => m.Tipo == "Taller (Redactor)");
+            }
+            else
+            {
+                Assert.DoesNotContain(result, m => m.Tipo == "Taller (Redactor)");
+            }
+            if (privados)
+            {
+                Assert.Contains(result, m => m.Tipo == "Privados");
+            }
+            else
+            {
+                Assert.DoesNotContain(result, m => m.Tipo == "Privados");
+            }
         }
     }
 }

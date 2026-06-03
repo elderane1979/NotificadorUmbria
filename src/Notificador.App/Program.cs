@@ -49,7 +49,7 @@ namespace Notificador.App
             services.AddSingleton<INotificadorService, NotificadorService>();
 
             //infraestructura
-            services.AddSingleton<ISettingsService, SettingsProvider>();
+            services.AddSingleton<ISettingsProvider, SettingsProvider>();
             services.AddSingleton<IUmbriaClient, UmbriaClient>();
             services.AddSingleton<IHtmlParser, UmbriaHtmlParser>();
                       

@@ -5,9 +5,9 @@ namespace Notificador.Core.Services
 {
     public class SettingService : ISettingService
     {
-        private readonly ISettingsService _settingsProvider;
+        private readonly ISettingsProvider _settingsProvider;
 
-        public SettingService(ISettingsService settingsProvider)
+        public SettingService(ISettingsProvider settingsProvider)
         {
             _settingsProvider = settingsProvider;
         }

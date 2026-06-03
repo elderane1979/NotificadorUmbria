@@ -15,6 +15,37 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Notificador.Tests", "tests\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Notificador.Contracts", "src\Notificador.Contracts\Notificador.Contracts.csproj", "{3CF4F791-1D32-42C7-8E7D-E45A2AD6CED9}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".github", ".github", "{6EF0188A-EA07-4B99-BD80-45E40DFC8D01}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "agents", "agents", "{75D61CE0-7473-4ED4-8B83-042B359A4FF4}"
+	ProjectSection(SolutionItems) = preProject
+		.github\agents\test-generator.agent.md = .github\agents\test-generator.agent.md
+		.github\agents\winforms-modernization-architect.agent.md = .github\agents\winforms-modernization-architect.agent.md
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "skills", "skills", "{A477FC72-BE2A-4400-9FB3-E788A69802F5}"
+	ProjectSection(SolutionItems) = preProject
+		.github\skills\assertions.md = .github\skills\assertions.md
+		.github\skills\build-and-run.md = .github\skills\build-and-run.md
+		.github\skills\dependency-analysis.md = .github\skills\dependency-analysis.md
+		.github\skills\layer_separation.md = .github\skills\layer_separation.md
+		.github\skills\mocking.md = .github\skills\mocking.md
+		.github\skills\winforms-analysis.md = .github\skills\winforms-analysis.md
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "workflows", "workflows", "{8A1D873E-A9EE-4788-A93E-8DCBAB4BEEF7}"
+	ProjectSection(SolutionItems) = preProject
+		.github\workflows\generate-and-run.md = .github\workflows\generate-and-run.md
+		.github\workflows\modernize_winform.md = .github\workflows\modernize_winform.md
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "templates", "templates", "{B042183E-5AA0-44FC-8162-BF2F7C0BFD88}"
+	ProjectSection(SolutionItems) = preProject
+		.github\templates\mock-template.md = .github\templates\mock-template.md
+		.github\templates\test-case.md = .github\templates\test-case.md
+		.github\templates\test-template.md = .github\templates\test-template.md
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -48,6 +79,12 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{75D61CE0-7473-4ED4-8B83-042B359A4FF4} = {6EF0188A-EA07-4B99-BD80-45E40DFC8D01}
+		{A477FC72-BE2A-4400-9FB3-E788A69802F5} = {6EF0188A-EA07-4B99-BD80-45E40DFC8D01}
+		{8A1D873E-A9EE-4788-A93E-8DCBAB4BEEF7} = {6EF0188A-EA07-4B99-BD80-45E40DFC8D01}
+		{B042183E-5AA0-44FC-8162-BF2F7C0BFD88} = {6EF0188A-EA07-4B99-BD80-45E40DFC8D01}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {00D5FA3F-4014-48F3-9C68-8C90B1772DFF}

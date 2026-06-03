@@ -18,11 +18,11 @@ namespace Notificador.App
         float incrementoProgreso = 0;
         float progreso = 0;
 
-        private readonly ISettingsService _settingService;
+        private readonly ISettingsProvider _settingService;
         private readonly INotificadorService _notificadorService;
         private readonly IServiceProvider _serviceProvider;
 
-        public FrmMain(ISettingsService settingService, INotificadorService notificadorService, IServiceProvider serviceProvider)
+        public FrmMain(ISettingsProvider settingService, INotificadorService notificadorService, IServiceProvider serviceProvider)
         {
             _serviceProvider = serviceProvider;
             _settingService = settingService;

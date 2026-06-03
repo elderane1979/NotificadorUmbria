@@ -1,6 +1,6 @@
 namespace Notificador.Contracts.Interfaces
 {
-    public interface ISettingsService
+    public interface ISettingsProvider
     {
         string Url { get; set;}
         string Usuario { get; set;}

@@ -9,6 +9,7 @@ Este archivo contiene reglas específicas y contextuales para agentes IA que tra
 - Usa PascalCase para tipos y miembros públicos.
 - Usa el guión bajo (_) como prefijo para miembros privados de una clase (ej. _logger).
 - Usa TODO_EN_MAYUSCULAS para constantes.
+ - No uses abreviaturas en los nombres de clases, namespaces, interfaces, métodos ni variables, a menos que se indique lo contrario.
 
 ## Error Handling
 - Usa bloques try/catch para operaciones asíncronas y registra o propaga errores según el patrón existente en el proyecto.
