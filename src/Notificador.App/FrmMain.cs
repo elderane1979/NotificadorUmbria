@@ -30,6 +30,10 @@ namespace Notificador.App
 
             InitializeComponent();
 
+            // Asegurar que el NotifyIcon tiene un icono para mostrarse en la bandeja
+            if (notifyIcon1.Icon == null)
+                notifyIcon1.Icon = System.Drawing.SystemIcons.Application;
+
             //version
             this.Text += " v" + Assembly.GetEntryAssembly().GetName().Version.ToString();
 
@@ -62,6 +66,7 @@ namespace Notificador.App
             }
             ProgressBar.Value = (int)(progreso);
         }
+
         private void CalcularIntervalo()
         {/*
             Properties.Settings.Default.Espera * 60 --> 100
@@ -69,6 +74,7 @@ namespace Notificador.App
                 */
             incrementoProgreso = ((float)(ProgressBar.Maximum - ProgressBar.Minimum) / (_settingService.Espera * 60));
         }
+
         private async Task ComprobarAsync()
         {
             try
@@ -243,7 +249,7 @@ namespace Notificador.App
             Configurar();
         }
 
-        private void comprogarToolStripMenuItem_Click(object sender, EventArgs e)
+        private void comprobarToolStripMenuItem_Click(object sender, EventArgs e)
         {
             ComprobarAsync();
         }

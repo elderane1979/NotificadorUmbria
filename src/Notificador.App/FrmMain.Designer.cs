@@ -31,6 +31,7 @@ namespace Notificador.App
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmMain));
             this.ProgressBar = new System.Windows.Forms.ProgressBar();
             this.tbResumen = new System.Windows.Forms.TextBox();
             this.BtnComprobar = new System.Windows.Forms.Button();
@@ -119,7 +120,8 @@ namespace Notificador.App
             // notifyIcon1
             // 
             this.notifyIcon1.ContextMenuStrip = this.contextMenuStrip1;
-            this.notifyIcon1.Text = "Notificador Novedades Umbria";
+            this.notifyIcon1.Icon = ((System.Drawing.Icon)(resources.GetObject("notifyIcon1.Icon")));
+            this.notifyIcon1.Text = "Novedades Umbria";
             this.notifyIcon1.Click += new System.EventHandler(this.notifyIcon1_Click);
             // 
             // contextMenuStrip1
@@ -141,7 +143,7 @@ namespace Notificador.App
             this.comprogarToolStripMenuItem.Name = "comprogarToolStripMenuItem";
             this.comprogarToolStripMenuItem.Size = new System.Drawing.Size(153, 22);
             this.comprogarToolStripMenuItem.Text = "Comprobar";
-            this.comprogarToolStripMenuItem.Click += new System.EventHandler(this.comprogarToolStripMenuItem_Click);
+            this.comprogarToolStripMenuItem.Click += new System.EventHandler(this.comprobarToolStripMenuItem_Click);
             // 
             // configurarToolStripMenuItem
             // 
@@ -176,14 +178,14 @@ namespace Notificador.App
             // maximizarToolStripMenuItem
             // 
             this.maximizarToolStripMenuItem.Name = "maximizarToolStripMenuItem";
-            this.maximizarToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.maximizarToolStripMenuItem.Size = new System.Drawing.Size(153, 22);
             this.maximizarToolStripMenuItem.Text = "Maximizar";
             this.maximizarToolStripMenuItem.Click += new System.EventHandler(this.maximizarToolStripMenuItem_Click);
             // 
             // salirToolStripMenuItem
             // 
             this.salirToolStripMenuItem.Name = "salirToolStripMenuItem";
-            this.salirToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.salirToolStripMenuItem.Size = new System.Drawing.Size(153, 22);
             this.salirToolStripMenuItem.Text = "Salir";
             this.salirToolStripMenuItem.Click += new System.EventHandler(this.salirToolStripMenuItem_Click);
             // 
