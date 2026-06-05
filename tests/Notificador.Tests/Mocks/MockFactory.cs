@@ -14,6 +14,7 @@ namespace Notificador.Tests.Mocks
             { typeof(IUmbriaClient), () => new UmbriaClientMock() },
             { typeof(IHtmlParser), () => new HtmlParserMock() },
             { typeof(ISettingsProvider), () => new SettingsProviderMock() },
+            { typeof(ISettingService), () => new SettingsServiceMock() },
             { typeof(ICryptoService), () => new CryptoServiceMock() }
         };
 

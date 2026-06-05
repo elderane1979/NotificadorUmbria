@@ -48,6 +48,9 @@
     <Compile Include="FrmConf.Designer.cs">
       <DependentUpon>FrmConf.cs</DependentUpon>
     </Compile>
+    <Compile Include="Models\MensajeUI.cs" />
+    <Compile Include="Process\FormMainProcess.cs" />
+    <Compile Include="Process\IFormMainProcess.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Settings.Designer.cs">
@@ -57,9 +60,9 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-	  <None Include=".github\**\*">
-		<CopyToOutputDirectory>Never</CopyToOutputDirectory>
-	  </None>
+    <None Include=".github\**\*">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Reference Include="AutoMapper, Version=16.0.0.0, Culture=neutral, PublicKeyToken=be96cd2c38ef1005, processorArchitecture=MSIL">

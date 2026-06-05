@@ -1,4 +1,5 @@
 using Microsoft.Extensions.DependencyInjection;
+using Notificador.App.Process;
 using Notificador.Contracts.Helper;
 using Notificador.Contracts.Interfaces;
 using Notificador.Core.Interfaces;
@@ -19,39 +20,58 @@ namespace Notificador.App
         float progreso = 0;
 
         private readonly ISettingsProvider _settingService;
-        private readonly INotificadorService _notificadorService;
         private readonly IServiceProvider _serviceProvider;
+        private readonly IFormMainProcess _formMainProcess;
 
-        public FrmMain(ISettingsProvider settingService, INotificadorService notificadorService, IServiceProvider serviceProvider)
+        public FrmMain(ISettingsProvider settingService, 
+                       IServiceProvider serviceProvider,
+                       IFormMainProcess formMainProcess)
         {
             _serviceProvider = serviceProvider;
             _settingService = settingService;
-            _notificadorService = notificadorService;
+            _formMainProcess = formMainProcess;
 
             InitializeComponent();
 
-            // Asegurar que el NotifyIcon tiene un icono para mostrarse en la bandeja
-            if (notifyIcon1.Icon == null)
-                notifyIcon1.Icon = System.Drawing.SystemIcons.Application;
 
             //version
             this.Text += " v" + Assembly.GetEntryAssembly().GetName().Version.ToString();
 
+            InitTimer();
+
+            LblNext.Text = "Próxima comprobación: " + (DateTime.Now.AddMinutes(_settingService.Espera));
+
+            InitProgressBar();
+
+            InitNotifyIcon();
+
+            ComprobarAsync();
+        }
+
+        private void InitTimer()
+        {
             timerProgreso.Interval = 1000;
             timerProgreso.Tick += TimerProgreso_Tick;
             timerProgreso.Start();
+        }
 
-            CalcularIntervalo();
-            LblNext.Text = "Próxima comprobación: " + (DateTime.Now.AddMinutes(_settingService.Espera));
-
+        private void InitProgressBar()
+        {
+            _formMainProcess.CalcularIntervalo(ProgressBar.Minimum, ProgressBar.Maximum, _settingService.Espera);
             progreso = ProgressBar.Minimum;
             ProgressBar.Value = ProgressBar.Minimum;
+        }
 
+        private void InitNotifyIcon()
+        {
+            // Asegurar que el NotifyIcon tiene un icono para mostrarse en la bandeja
+            if (notifyIcon1.Icon == null)
+            {
+                notifyIcon1.Icon = System.Drawing.SystemIcons.Application;
+            }
             notifyIcon1.BalloonTipTitle = "Notificador Mensajes Umbría";
             notifyIcon1.BalloonTipText = Constantes.ESPERANDO;
             notifyIcon1.BalloonTipIcon = ToolTipIcon.Info;
-
-            ComprobarAsync();
         }
 
         private void TimerProgreso_Tick(object sender, EventArgs e)
@@ -67,40 +87,28 @@ namespace Notificador.App
             ProgressBar.Value = (int)(progreso);
         }
 
-        private void CalcularIntervalo()
-        {/*
-            Properties.Settings.Default.Espera * 60 --> 100
-                1 --> ¿¿
-                */
-            incrementoProgreso = ((float)(ProgressBar.Maximum - ProgressBar.Minimum) / (_settingService.Espera * 60));
-        }
-
         private async Task ComprobarAsync()
         {
             try
             {
-                if (!NetworkInterface.GetIsNetworkAvailable())
-                {
-                    throw new NetworkInformationException();
-                }
+                var mensajeUI = await _formMainProcess.ComprobarAsync();
 
-                var result = await _notificadorService.GetNovedadesAsync();
-
-                var resultResumido = CrearMensaje(result, true);
-                var resultMsg = CrearMensaje(result, _settingService.Resumido);
-
-                tbResumen.Text = resultMsg;
-                notifyIcon1.BalloonTipText = resultMsg;
-                string notifyText = "Novedades Umbria:" + Environment.NewLine + resultResumido;
+                tbResumen.Text = mensajeUI.Mensaje;
+                notifyIcon1.BalloonTipText = mensajeUI.Mensaje; 
+                string notifyText = "Novedades Umbria:" + Environment.NewLine + mensajeUI.MensajeResumido ;
                 if (notifyText.Length > 64)
+                {
                     notifyText = notifyText.Substring(0, 61) + "...";
+                }
                 notifyIcon1.Text = notifyText;
                 notifyIcon1.BalloonTipIcon = ToolTipIcon.Info;
-                lblMsgToolStripMenuItem.Text = resultResumido;
+                lblMsgToolStripMenuItem.Text = mensajeUI.MensajeResumido ;
 
-                if (resultMsg != Constantes.NO_MENSAJES
+                if (mensajeUI.Mensaje != Constantes.NO_MENSAJES
                     || _settingService.ShowNotificacionSinMensajes)
+                {
                     notifyIcon1.ShowBalloonTip(2000);
+                }
 
                 LblLast.Text = "Última comprobación: " + DateTime.Now;
                 LblNext.Text = "Siguiente comprobación: " + DateTime.Now.AddMinutes(_settingService.Espera);
@@ -118,67 +126,6 @@ namespace Notificador.App
                 progreso = ProgressBar.Minimum;
                 ProgressBar.Value = ProgressBar.Minimum;
             }
-        }
-        private string CrearMensaje(IEnumerable<Mensaje> mensajes, bool resumido)
-        {
-            string Mensaje = String.Empty;
-            int total_mensajes = mensajes
-                .Where(msg => msg.Tipo != Constantes.MENSAJES_PRIVADOS)
-                .Sum(msg => msg.MensajesCount);
-            int total_mensajes_privados = mensajes
-                .Where(msg => msg.Tipo == Constantes.MENSAJES_PRIVADOS)
-                .Sum(msg => msg.MensajesCount);
-            int total_hilos = mensajes.Sum(msg => msg.Hilos);
-
-            if (total_mensajes + total_mensajes_privados > 0)
-            {
-                if (resumido)
-                {
-                    Mensaje = String.Empty;
-                    if (total_mensajes > 0)
-                    {
-                        Mensaje += String.Format("{0} mensaje{2} en {1} hilo{3}",
-                            total_mensajes,
-                            total_hilos,
-                            total_mensajes > 1 ? "s" : "",
-                            total_hilos > 1 ? "s" : "");
-                    }
-                    if (total_mensajes_privados > 0)
-                    {
-                        if (!String.IsNullOrEmpty(Mensaje))
-                            Mensaje += Environment.NewLine;
-                        Mensaje += String.Format("{0} mensaje{1} privado{1}",
-                            total_mensajes_privados,
-                            total_mensajes_privados > 1 ? "s" : "");
-                    }
-                }
-                else
-                {
-                    foreach (Mensaje mensaje in mensajes)
-                    {
-                        if (mensaje.MensajesCount > 0)
-                        {
-                            if (!String.IsNullOrEmpty(Mensaje))
-                                Mensaje += Environment.NewLine;
-                            Mensaje += String.Format("{0} mensaje{2} nuevo{2} como {1} ",
-                               mensaje.MensajesCount,
-                               mensaje.Tipo,
-                                total_mensajes > 1 ? "s" : "");
-                            if (mensaje.Tipo != Constantes.MENSAJES_PRIVADOS)
-                                Mensaje += String.Format("en {0} hilo{1}",
-                                        mensaje.Hilos,
-                                        total_hilos > 1 ? "s" : "");
-                            if (!String.IsNullOrEmpty(mensaje.Partida))
-                                Mensaje += String.Format(" en la partida {0}", mensaje.Partida);
-                        }
-                    }
-                }
-            }
-            else
-            {
-                Mensaje = Constantes.NO_MENSAJES;
-            }
-            return Mensaje;
         }
 
         private void BtnComprobar_Click(object sender, EventArgs e)
@@ -204,26 +151,15 @@ namespace Notificador.App
         {
             if (e is MouseEventArgs &&
                 (e as MouseEventArgs).Button == MouseButtons.Left)
-                IrANovedades();
+               _formMainProcess.IrANovedades();
         }
         private void btnNovedades_Click(object sender, EventArgs e)
         {
-            IrANovedades();
-
+            _formMainProcess.IrANovedades();
         }
         private void irANovedadesToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            IrANovedades();
-        }
-
-        private void IrANovedades()
-        {
-            if (String.IsNullOrEmpty(_settingService.Browser) ||
-                _settingService.Browser == Constantes.DEFAULT_BROWSER)
-                System.Diagnostics.Process.Start(_settingService.Url);
-            else
-                System.Diagnostics.Process.Start(_settingService.Browser, _settingService.Url);
-
+            _formMainProcess.IrANovedades();
         }
 
         private void BtnConfiguración_Click(object sender, EventArgs e)
@@ -238,7 +174,7 @@ namespace Notificador.App
             if (frm.ShowDialog() == DialogResult.OK)
             {
 
-                CalcularIntervalo();
+                _formMainProcess.CalcularIntervalo(ProgressBar.Minimum, ProgressBar.Maximum, _settingService.Espera);
                 ProgressBar.Value = ProgressBar.Minimum;
                 LblNext.Text = "Próxima comprobación: " + (DateTime.Now.AddMinutes(_settingService.Espera));
             }

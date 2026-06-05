@@ -13,11 +13,11 @@ namespace Notificador.Core.Services
     {
         private readonly IUmbriaClient _umbriaClient;
         private readonly IHtmlParser _htmlParser;
-        private readonly ISettingsProvider _settings;
+        private readonly ISettingService _settings;
         private readonly ICryptoService _crypto;
         private readonly IMapper _mapper;
 
-        public NotificadorService(IUmbriaClient umbriaClient, IHtmlParser htmlParser, ISettingsProvider settings, ICryptoService crypto, IMapper mapper)
+        public NotificadorService(IUmbriaClient umbriaClient, IHtmlParser htmlParser, ISettingService settings, ICryptoService crypto, IMapper mapper)
         {
             _umbriaClient = umbriaClient;
             _htmlParser = htmlParser;

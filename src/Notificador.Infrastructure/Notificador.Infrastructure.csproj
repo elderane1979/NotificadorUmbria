@@ -27,7 +27,6 @@
     <DefineConstants>TRACE</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Models\SettingsFlagsDto.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\SettingsProvider.cs" />
     <Compile Include="Services\UmbriaClient.cs" />

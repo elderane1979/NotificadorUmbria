@@ -1,5 +1,6 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Notificador.App.Process;
 using Notificador.Contracts.Interfaces;
 using Notificador.Core.Interfaces;
 using Notificador.Core.Services;
@@ -43,6 +44,9 @@ namespace Notificador.App
                 builder.SetMinimumLevel(LogLevel.Information);
             });
             
+            // Procesos UI
+            services.AddSingleton<IFormMainProcess, FormMainProcess>();
+
             // Registrar dependencias (servicios)
             services.AddSingleton<ISettingService, SettingService>();
             services.AddSingleton<ICryptoService, CryptoService>();

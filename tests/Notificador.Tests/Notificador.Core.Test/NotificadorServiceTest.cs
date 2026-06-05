@@ -14,8 +14,8 @@ namespace Notificador.Tests.Notificador.Core.Test
     public class NotificadorServiceTest
     {
         private INotificadorService CreateService(IUmbriaClient umbriaClient = null, 
-                                                  IHtmlParser htmlParser = null, 
-                                                  ISettingsProvider settingProvider = null, 
+                                                  IHtmlParser htmlParser = null,
+                                                  ISettingService settingService = null, 
                                                   ICryptoService cryptoService = null)
         {
             var config = new MapperConfiguration(cfg =>
@@ -30,12 +30,12 @@ namespace Notificador.Tests.Notificador.Core.Test
                 umbriaClient = Mocks.MockFactory.GetMock<IUmbriaClient>();
             if (htmlParser == null)
                 htmlParser = Mocks.MockFactory.GetMock<IHtmlParser>();
-            if(settingProvider == null)
-                settingProvider = Mocks.MockFactory.GetMock<ISettingsProvider>();
+            if(settingService == null)
+                settingService = Mocks.MockFactory.GetMock<ISettingService>();
             if(cryptoService == null)
                 cryptoService = Mocks.MockFactory.GetMock<ICryptoService>();
 
-            return new NotificadorService(umbriaClient, htmlParser, settingProvider, cryptoService, mapper);
+            return new NotificadorService(umbriaClient, htmlParser, settingService, cryptoService, mapper);
         }
 
         [Fact]
@@ -55,11 +55,11 @@ namespace Notificador.Tests.Notificador.Core.Test
         public async Task GetNovedadesAsync_WhenCryptoDecryptThrows_UsesEmptyClave()
         {
             //Arrange
-            var settingProvider = Mocks.MockFactory.GetMock<ISettingsProvider>();
+            var settingProvider = Mocks.MockFactory.GetMock<ISettingService>();
             settingProvider.ClaveEncriptada = FakeDataUmbriaClient.FAKE_PASSWORD_EXCEPTION;
 
             // Prepare mocks and override crypto to throw
-            var service = CreateService(settingProvider: settingProvider);
+            var service = CreateService(settingService: settingProvider);
             
             //Act
             var result = await service.GetNovedadesAsync();
@@ -74,7 +74,7 @@ namespace Notificador.Tests.Notificador.Core.Test
         {
             //Arrange
             // Prepare mocks and override settings to disable most flags
-            var settingsMock = Mocks.MockFactory.GetMock<ISettingsProvider>();
+            var settingsMock = Mocks.MockFactory.GetMock<ISettingService>();
             if (settingsMock != null)
             {
                 settingsMock.ShowMensajesDirector= false;
@@ -84,7 +84,7 @@ namespace Notificador.Tests.Notificador.Core.Test
                 settingsMock.ShowMensajesTalleresRedactor = false;
                 settingsMock.ShowMensajesPrivados = true;
             }
-            var service = CreateService(settingProvider: settingsMock);
+            var service = CreateService(settingService: settingsMock);
 
             //Act
             var result = (await service.GetNovedadesAsync()).ToList();
@@ -101,7 +101,7 @@ namespace Notificador.Tests.Notificador.Core.Test
         [InlineData(false, false, true, true, true, false)]   // VIP + Talleres
         public async Task GetNovedadesAsync_VariousSettings_CombinationsBehaveAsExpected(bool director, bool jugador, bool vip, bool tallerDirector, bool tallerRedactor, bool privados)
         {
-            var settings = Mocks.MockFactory.GetMock<ISettingsProvider>();
+            var settings = Mocks.MockFactory.GetMock<ISettingService>();
 
             // Aplicar las propiedades directamente sobre el objeto devuelto por la fábrica
             settings.ShowMensajesDirector = director;
@@ -111,7 +111,7 @@ namespace Notificador.Tests.Notificador.Core.Test
             settings.ShowMensajesTalleresRedactor = tallerRedactor;
             settings.ShowMensajesPrivados = privados;
 
-            var service = CreateService(settingProvider: settings);
+            var service = CreateService(settingService: settings);
 
             var result = (await service.GetNovedadesAsync()).ToList();
 

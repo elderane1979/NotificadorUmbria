@@ -34,7 +34,6 @@
     <Compile Include="Interfaces\INotificadorService.cs" />
     <Compile Include="Interfaces\ISettingService.cs" />
     <Compile Include="Models\Mensaje.cs" />
-    <Compile Include="Models\SettingsFlags.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\CryptoService.cs" />
     <Compile Include="Services\NotificadorService.cs" />

@@ -51,22 +51,35 @@ namespace Notificador.App
             return lst;
         }
 
-        private string GetShellOpenCommand(RegistryKey webClientsRootKey, string subKeyName)
+        private static string GetShellOpenCommand(RegistryKey webClientsRootKey, string subKeyName)
         {
             const string RegEditShellKey = "shell";
             const string RegEditOpenKey = "open";
             const string RegEditCommandKey = "command";
             string commandLineUri = "";
 
-            if (webClientsRootKey.OpenSubKey(subKeyName) != null &&
-                webClientsRootKey.OpenSubKey(subKeyName).OpenSubKey(RegEditShellKey) != null &&
-                webClientsRootKey.OpenSubKey(subKeyName).OpenSubKey(RegEditShellKey).OpenSubKey(RegEditOpenKey) != null &&
-                webClientsRootKey.OpenSubKey(subKeyName).OpenSubKey(RegEditShellKey).OpenSubKey(RegEditOpenKey).OpenSubKey(RegEditCommandKey) != null)
+            var l1 = GetRegistryKey(webClientsRootKey, subKeyName);
+            var l2 = GetRegistryKey(l1, RegEditShellKey);
+            var l3 = GetRegistryKey(l2, RegEditOpenKey);
+            var l4 = GetRegistryKey(l3, RegEditCommandKey);
+
+            if(l4 != null)
             {
-                commandLineUri = (string)webClientsRootKey.OpenSubKey(subKeyName).OpenSubKey(RegEditShellKey).OpenSubKey(RegEditOpenKey).OpenSubKey(RegEditCommandKey).GetValue(null);
+                commandLineUri = (string)l4.GetValue(null);
             }
 
             return commandLineUri;
+        }
+
+        private static RegistryKey GetRegistryKey(RegistryKey rootKey, string subKeyName)
+        {
+            if(rootKey == null ||
+               string.IsNullOrEmpty(subKeyName))
+            {
+                return null;
+            }
+
+            return rootKey.OpenSubKey(subKeyName);
         }
 
         private void FrmConf_Load(object sender, EventArgs e)

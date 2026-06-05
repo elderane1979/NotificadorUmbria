@@ -47,8 +47,11 @@
     <Compile Include="Mocks\CryptoServiceMock.cs" />
     <Compile Include="Mocks\HtmlParserMock.cs" />
     <Compile Include="Mocks\MockFactory.cs" />
+    <Compile Include="Mocks\NotificadorServiceMock.cs" />
+    <Compile Include="Mocks\SettingsServiceMock.cs" />
     <Compile Include="Mocks\SettingsProviderMock.cs" />
     <Compile Include="Mocks\UmbriaClientMock.cs" />
+    <Compile Include="Notificador.App.Process.Test\FormMainProcessTests.cs" />
     <Compile Include="Notificador.Core.Test\CryptoServiceTests.cs" />
     <Compile Include="Notificador.Core.Test\NotificadorServiceTest.cs" />
     <Compile Include="Notificador.Core.Test\SettingServiceTests.cs" />
@@ -60,6 +63,10 @@
     <Compile Include="Services\SettingServiceTests.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\src\Notificador.App\Notificador.App.csproj">
+      <Project>{12345678-90ab-cdef-1234-567890abcdef}</Project>
+      <Name>Notificador.App</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\src\Notificador.Contracts\Notificador.Contracts.csproj">
       <Project>{3cf4f791-1d32-42c7-8e7d-e45a2ad6ced9}</Project>
       <Name>Notificador.Contracts</Name>
