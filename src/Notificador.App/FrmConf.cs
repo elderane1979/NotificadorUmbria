@@ -12,7 +12,7 @@ namespace Notificador.App
         private readonly ISettingService _settingService;
         private readonly ICryptoService _cryptoService;
 
-        RegistryKey rkApp = Registry.CurrentUser.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", true);
+        private readonly RegistryKey rkApp = Registry.CurrentUser.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", true);
         const string AppNotificadorUmbria = "NotificadorUmbria";
 
         public FrmConf(ISettingService settingService, ICryptoService cryptoService)
@@ -26,10 +26,12 @@ namespace Notificador.App
             cmbBrowser.DisplayMember = "Item1";
             cmbBrowser.ValueMember = "Item2";
         }
-        private List<Tuple<string, string>> LoadInstalledBrowsers()
+        private static List<Tuple<string, string>> LoadInstalledBrowsers()
         {
-            List<Tuple<string, string>> lst = new List<Tuple<string, string>>();
-            lst.Add(new Tuple<string, string>(Constantes.DEFAULT_BROWSER, ""));
+            List<Tuple<string, string>> lst = new List<Tuple<string, string>>
+            {
+                new Tuple<string, string>(Constantes.DEFAULT_BROWSER, "")
+            };
 
             using (RegistryKey hklm = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry32))
             {

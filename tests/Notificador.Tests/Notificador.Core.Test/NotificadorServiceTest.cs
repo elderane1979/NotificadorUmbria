@@ -13,7 +13,7 @@ namespace Notificador.Tests.Notificador.Core.Test
 {
     public class NotificadorServiceTest
     {
-        private INotificadorService CreateService(IUmbriaClient umbriaClient = null, 
+        private static INotificadorService CreateService(IUmbriaClient umbriaClient = null, 
                                                   IHtmlParser htmlParser = null,
                                                   ISettingService settingService = null, 
                                                   ICryptoService cryptoService = null)

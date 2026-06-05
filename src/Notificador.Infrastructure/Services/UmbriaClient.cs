@@ -13,8 +13,10 @@ namespace Notificador.Infrastructure.Services
 
         public UmbriaClient()
         {
-            _httpClient = new HttpClient();
-            _httpClient.Timeout = TimeSpan.FromSeconds(30);
+            _httpClient = new HttpClient
+            {
+                Timeout = TimeSpan.FromSeconds(30)
+            };
         }
 
         public async Task<string> PostCredentialsAndGetHtmlAsync(string url, string usuario, string clave)

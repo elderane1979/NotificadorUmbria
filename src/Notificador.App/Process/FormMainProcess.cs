@@ -1,4 +1,5 @@
-﻿using Notificador.App.Models;
+﻿using Microsoft.Extensions.Primitives;
+using Notificador.App.Models;
 using Notificador.Contracts.Helper;
 using Notificador.Core.Interfaces;
 using Notificador.Core.Models;
@@ -6,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.NetworkInformation;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace Notificador.App.Process
@@ -45,59 +47,19 @@ namespace Notificador.App.Process
             }
         }
 
-        private string CrearMensaje(IEnumerable<Mensaje> mensajes, bool resumido)
+        private static string CrearMensaje(IEnumerable<Mensaje> mensajes, bool resumido)
         {
-            string Mensaje = String.Empty;
-            int total_mensajes = mensajes
-                .Where(msg => msg.Tipo != Constantes.MENSAJES_PRIVADOS)
-                .Sum(msg => msg.MensajesCount);
-            int total_mensajes_privados = mensajes
-                .Where(msg => msg.Tipo == Constantes.MENSAJES_PRIVADOS)
-                .Sum(msg => msg.MensajesCount);
-            int total_hilos = mensajes.Sum(msg => msg.Hilos);
+            string Mensaje;
 
-            if (total_mensajes + total_mensajes_privados > 0)
+            if (mensajes.Any())
             {
                 if (resumido)
                 {
-                    Mensaje = String.Empty;
-                    if (total_mensajes > 0)
-                    {
-                        Mensaje += String.Format("{0} mensaje{2} en {1} hilo{3}",
-                            total_mensajes,
-                            total_hilos,
-                            total_mensajes > 1 ? "s" : "",
-                            total_hilos > 1 ? "s" : "");
-                    }
-                    if (total_mensajes_privados > 0)
-                    {
-                        if (!String.IsNullOrEmpty(Mensaje))
-                            Mensaje += Environment.NewLine;
-                        Mensaje += String.Format("{0} mensaje{1} privado{1}",
-                            total_mensajes_privados,
-                            total_mensajes_privados > 1 ? "s" : "");
-                    }
+                    Mensaje = CrearMensajeResumido(mensajes);
                 }
                 else
                 {
-                    foreach (Mensaje mensaje in mensajes)
-                    {
-                        if (mensaje.MensajesCount > 0)
-                        {
-                            if (!String.IsNullOrEmpty(Mensaje))
-                                Mensaje += Environment.NewLine;
-                            Mensaje += String.Format("{0} mensaje{2} nuevo{2} como {1} ",
-                               mensaje.MensajesCount,
-                               mensaje.Tipo,
-                                total_mensajes > 1 ? "s" : "");
-                            if (mensaje.Tipo != Constantes.MENSAJES_PRIVADOS)
-                                Mensaje += String.Format("en {0} hilo{1}",
-                                        mensaje.Hilos,
-                                        total_hilos > 1 ? "s" : "");
-                            if (!String.IsNullOrEmpty(mensaje.Partida))
-                                Mensaje += String.Format(" en la partida {0}", mensaje.Partida);
-                        }
-                    }
+                    Mensaje = CrearMensajeCompleto(mensajes);
                 }
             }
             else
@@ -105,6 +67,66 @@ namespace Notificador.App.Process
                 Mensaje = Constantes.NO_MENSAJES;
             }
             return Mensaje;
+        }
+
+        private static string CrearMensajeCompleto(IEnumerable<Mensaje> mensajes)
+        {
+            StringBuilder mensajeBuild = new StringBuilder();
+            foreach (Mensaje mensaje in mensajes)
+            {
+                CrearLineaDeMensaje( mensajeBuild, mensaje);
+            }
+
+            return mensajeBuild.ToString();
+        }
+
+        private static void CrearLineaDeMensaje(StringBuilder mensajeBuild, Mensaje mensaje)
+        {
+            if (mensaje.MensajesCount > 0)
+            {
+                if (!String.IsNullOrEmpty(mensajeBuild.ToString()))
+                    mensajeBuild.Append(Environment.NewLine);
+                mensajeBuild.Append(String.Format("{0} mensaje{2} nuevo{2} como {1} ",
+                   mensaje.MensajesCount,
+                   mensaje.Tipo,
+                   mensaje.MensajesCount > 1 ? "s" : ""));
+                if (mensaje.Tipo != Constantes.MENSAJES_PRIVADOS)
+                    mensajeBuild.Append(String.Format("en {0} hilo{1}",
+                            mensaje.Hilos,
+                            mensaje.Hilos > 1 ? "s" : ""));
+                if (!String.IsNullOrEmpty(mensaje.Partida))
+                    mensajeBuild.Append(String.Format(" en la partida {0}", mensaje.Partida));
+            }
+        }
+
+        private static string CrearMensajeResumido(IEnumerable<Mensaje> mensajes)
+        {
+            StringBuilder Mensaje = new StringBuilder();
+            int total_mensajes = mensajes
+                .Where(msg => msg.Tipo != Constantes.MENSAJES_PRIVADOS)
+                .Sum(msg => msg.MensajesCount);
+            int total_mensajes_privados = mensajes
+                .Where(msg => msg.Tipo == Constantes.MENSAJES_PRIVADOS)
+                .Sum(msg => msg.MensajesCount);
+            int total_hilos = mensajes.Sum(msg => msg.Hilos);
+            if (total_mensajes > 0)
+            {
+                Mensaje.Append( String.Format("{0} mensaje{2} en {1} hilo{3}",
+                    total_mensajes,
+                    total_hilos,
+                    total_mensajes > 1 ? "s" : "",
+                    total_hilos > 1 ? "s" : ""));
+            }
+            if (total_mensajes_privados > 0)
+            {
+                if (Mensaje.Length>0)
+                    Mensaje.Append(Environment.NewLine);
+                Mensaje.Append( String.Format("{0} mensaje{1} privado{1}",
+                    total_mensajes_privados,
+                    total_mensajes_privados > 1 ? "s" : ""));
+            }
+
+            return Mensaje.ToString();
         }
 
         public void IrANovedades()

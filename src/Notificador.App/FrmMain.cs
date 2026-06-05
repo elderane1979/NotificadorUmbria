@@ -2,12 +2,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Notificador.App.Process;
 using Notificador.Contracts.Helper;
 using Notificador.Contracts.Interfaces;
-using Notificador.Core.Interfaces;
-using Notificador.Core.Models;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.NetworkInformation;
 using System.Reflection;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -57,7 +52,7 @@ namespace Notificador.App
 
         private void InitProgressBar()
         {
-            _formMainProcess.CalcularIntervalo(ProgressBar.Minimum, ProgressBar.Maximum, _settingService.Espera);
+            incrementoProgreso = _formMainProcess.CalcularIntervalo(ProgressBar.Minimum, ProgressBar.Maximum, _settingService.Espera);
             progreso = ProgressBar.Minimum;
             ProgressBar.Value = ProgressBar.Minimum;
         }
@@ -174,7 +169,7 @@ namespace Notificador.App
             if (frm.ShowDialog() == DialogResult.OK)
             {
 
-                _formMainProcess.CalcularIntervalo(ProgressBar.Minimum, ProgressBar.Maximum, _settingService.Espera);
+                incrementoProgreso = _formMainProcess.CalcularIntervalo(ProgressBar.Minimum, ProgressBar.Maximum, _settingService.Espera);
                 ProgressBar.Value = ProgressBar.Minimum;
                 LblNext.Text = "Próxima comprobación: " + (DateTime.Now.AddMinutes(_settingService.Espera));
             }

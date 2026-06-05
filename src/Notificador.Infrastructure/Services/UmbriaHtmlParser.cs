@@ -19,7 +19,13 @@ namespace Notificador.Infrastructure.Services
             var mensajes = new List<MensajeDto>();
 
             // Intentar leer nodos por ids conocidos
-            var ids = new[] { "idMensajesDirector", "idMensajesJugador", "idMensajesVIP", "idMensajesTalleresDirector", "idMensajesTalleresRedactor" };
+            var ids = new[] { 
+                "idMensajesDirector", 
+                "idMensajesJugador", 
+                "idMensajesVIP", 
+                "idMensajesTalleresDirector", 
+                "idMensajesTalleresRedactor"
+            };
 
             foreach (var id in ids)
             {
@@ -37,37 +43,48 @@ namespace Notificador.Infrastructure.Services
                     if (a_node == null)
                         continue;
 
-                    var partida = a_node.InnerText.Trim();
+                     MensajeDto mensaje = ParseHTMLNode(id, node_partida);
 
-                    var m_node = node_partida.SelectNodes("ul/li");
-                    int n_hilos = 0;
-                    int n_mensajes = 0;
-
-                    if (m_node != null)
-                    {
-                        n_hilos = m_node.Count;
-                        foreach (var node_hilo in m_node)
-                        {
-                            var span = node_hilo.SelectSingleNode("span");
-                            if (span == null)
-                                continue;
-
-                            if (int.TryParse(span.InnerText.Trim(), out int count))
-                                n_mensajes += count;
-                        }
-                    }
-
-                    mensajes.Add(new MensajeDto
-                    {
-                        Hilos = n_hilos,
-                        MensajesCount = n_mensajes,
-                        Tipo = MapIdToTipo(id),
-                        Partida = partida
-                    });
+                    mensajes.Add(mensaje);
                 }
             }
 
             return mensajes;
+        }
+
+        private static MensajeDto ParseHTMLNode(string id, HtmlNode node_partida)
+        {
+            var a_node = node_partida.SelectSingleNode("a");
+            if (a_node == null)
+                return null;
+
+            var partida = a_node.InnerText.Trim();
+
+            var m_node = node_partida.SelectNodes("ul/li");
+            int n_hilos = 0;
+            int n_mensajes = 0;
+
+            if (m_node != null)
+            {
+                n_hilos = m_node.Count;
+                foreach (var node_hilo in m_node)
+                {
+                    var span = node_hilo.SelectSingleNode("span");
+                    if (span == null)
+                        continue;
+
+                    if (int.TryParse(span.InnerText.Trim(), out int count))
+                        n_mensajes += count;
+                }
+            }
+            var mensaje = new MensajeDto
+            {
+                Hilos = n_hilos,
+                MensajesCount = n_mensajes,
+                Tipo = MapIdToTipo(id),
+                Partida = partida
+            };
+            return mensaje;
         }
 
         public MensajeDto ParseMensajesPrivados(string html)

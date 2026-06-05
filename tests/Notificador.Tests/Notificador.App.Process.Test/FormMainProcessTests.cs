@@ -13,7 +13,7 @@ namespace Notificador.Tests.Notificador.App.Process.Test
 {
     public class FormMainProcessTests
     {
-        private FormMainProcess CreateService(ISettingService settings = null, INotificadorService notificador = null)
+        private static FormMainProcess CreateService(ISettingService settings = null, INotificadorService notificador = null)
         {
             if (settings == null)
             {
